@@ -14,10 +14,14 @@ app.use(function (req, res, next) { //access control
 });
 
 // API
-app.use('/api/proofit', require('./api/proofit'));
+app.use('/api/sk', require('./api/sk'));
+app.use('/api/smu', require('./api/smu'));
+app.use('/api/toeic', require('./api/toeic'));
+app.use('/api/qnet', require('./api/qnet'));
+
 
 // Server
-var port = 3000;
+var port = 4000;
 app.listen(port, function(){
   console.log('listening on port:' + port);
 });

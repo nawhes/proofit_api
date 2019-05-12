@@ -1,0 +1,224 @@
+name: "Network"
+version: "1.0"
+
+channels:
+    account:
+        orderers:
+          - orderer.ca.com
+        peers:
+            app.app.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            smu.univ.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            qnet.license.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            toeic.language.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+    proofit:
+        orderers:
+          - orderer.ca.com
+        peers:
+            app.app.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            sk.recruit.com:
+                endorsingPeer: false
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            smu.univ.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            qnet.license.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            toeic.language.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+
+    univ:
+        orderers:
+          - orderer.ca.com
+        peers:
+            app.app.com:
+                endorsingPeer: false
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            smu.univ.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+    license:
+        orderers:
+          - orderer.ca.com
+        peers:
+            app.app.com:
+                endorsingPeer: false
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            qnet.license.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+    language:
+        orderers:
+          - orderer.ca.com
+        peers:
+            app.app.com:
+                endorsingPeer: false
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+            toeic.language.com:
+                endorsingPeer: true
+                chaincodeQuery: true
+                ledgerQuery: true
+                eventSource: true
+                
+organizations:
+    app:
+        mspid: app
+        peers:
+          - app.app.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey: 
+            path: /home/nawhes/proofit_api/gateway/crypto-config/app/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/app/cert.pem
+
+    recruit:
+        mspid: recruit
+        peers:
+          - sk.recruit.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/recruit/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/recruit/cert.pem
+                    
+    univ:
+        mspid: univ
+        peers:
+          - smu.univ.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey: 
+            path: /home/nawhes/proofit_api/gateway/crypto-config/univ/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/univ/cert.pem
+
+    license:
+        mspid: license
+        peers:
+          - qnet.license.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey: 
+            path: /home/nawhes/proofit_api/gateway/crypto-config/license/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/license/cert.pem
+
+    language:
+        mspid: language
+        peers:
+          - toeic.language.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey: 
+            path: /home/nawhes/proofit_api/gateway/crypto-config/language/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/language/cert.pem
+
+orderers:
+    orderer.ca.com:
+        url: grpcs://localhost:7050
+        grpcOptions:
+            ssl-target-name-override: orderer.ca.com
+            grpc-max-send-message-length: -1
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+peers:
+    app.app.com:
+        url: grpcs://localhost:7051
+        eventUrl: grpcs://localhost:7053
+        grpcOptions:
+            ssl-target-name-override: app.app.com
+            grpc.keepalive_time_ms: 600000
+            request-timeout: 120001
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+    sk.recruit.com:
+        url: grpcs://localhost:8051
+        eventUrl: grpcs://localhost:8053
+        grpcOptions:
+            ssl-target-name-override: sk.recruit.com
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+            
+    smu.univ.com:
+        url: grpcs://localhost:9051
+        eventUrl: grpcs://localhost:9053
+        grpcOptions:
+            ssl-target-name-override: smu.univ.com
+            grpc.keepalive_time_ms: 600000
+            request-timeout: 120001
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+    qnet.license.com:
+        url: grpcs://localhost:10051
+        eventUrl: grpcs://localhost:10053
+        grpcOptions:
+            ssl-target-name-override: qnet.license.com
+            grpc.keepalive_time_ms: 600000
+            request-timeout: 120001
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+    toeic.language.com:
+        url: grpcs://localhost:11051
+        eventUrl: grpcs://localhost:11053
+        grpcOptions:
+            ssl-target-name-override: toeic.language.com
+            grpc.keepalive_time_ms: 600000
+            request-timeout: 120001
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+certificateAuthorities:
+    server.ca.com:
+       url: https://localhost:7054
+       httpOptions:
+           verify: false
+       tlsCACerts:
+           path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+       caName: server.ca.com
+

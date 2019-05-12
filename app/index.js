@@ -14,7 +14,7 @@ app.use(function (req, res, next) { //access control
 });
 
 // API
-app.use('/api/proofit', require('./api/proofit'));
+app.use('/api', require('./api/proofit'));
 
 // Server
 var port = 3000;

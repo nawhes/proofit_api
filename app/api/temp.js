@@ -1,8 +1,6 @@
-
-'use strict'
-
 const express = require('express');
 const router = express.Router();
+
 
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
@@ -10,101 +8,54 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
+const wallet = new FileSystemWallet('../wallet');
+const bcrypt = require('bcrypt');
 
 //firebase
 const admin = require('firebase-admin');
 const serviceAccount = require('../proofit-firebase-adminsdk-3nhjp-71e627d9d8.json');
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://proofit-api.firebaseio.com'
+var func = require('./proofit2');
+
+router.post('/join', (req, res, next) => {
+    func.accountJoin(req, res, next);
 });
 
-router.post('/join', accountJoin);
+router.post('/query', proofitQuery, (req, res, next) => {
+});
 
-router.post('/query', accountQuery);
+router.post('/append', proofitAppend, (req, res, next) => {
+});
 
-router.post('/append', proofitAppend);
+router.post('/read', proofitRead, (req, res, next) => {
+});
 
-router.post('/read', proofitRead);
+router.post('/delete', proofitDelete, (req, res, next) => {
+});
 
-router.post('/delete', proofitDelete);
+// function verifyIdToken(req, res, next) {
+//     // idToken comes from the client app
+//     admin.auth().verifyIdToken(req.idToken)
+//         .then(function (decodedToken) {
+//             var uid = decodedToken.uid;
+//             req.uid = uid;
+//             next();
+//             // ...
+//         }).catch(function (error) {
+//             console.log(error);
+//             // Handle error
+//         });
+// }
 
-function accountJoin(req, res, next) {
-    if ( !req.body.pin ){
-        res.send("something wrong");
-	return;
-    }
-    let email;
-    let pin = req.body.pin;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
-        .catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-	    return;
-        });
-    async function main() {
-        const gateway = new Gateway();
-        try {
-            const userName = 'app.app.com';
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-		clientTlsIdentity: userName,
-                discovery: {
-			enabled: true, 
-			asLocalhost: true
-		},
-		eventHandlerOptions: { 
-			commitTimeout: 100
-		}
-            };
-            console.log('Connect to Fabric gateway.');
-            await gateway.connect(connectionProfile, connectionOptions);
-
-            console.log('getNetwork');
-            const network = await gateway.getNetwork('account');
-
-            console.log('getContract.');
-            const contract = await network.getContract('account');
-
-            console.log('Submit transaction.');
-            const response = await contract.submitTransaction('create', email, pin);
-
-            console.log('transaction response.');
-            let responseJson = JSON.parse(response.toString());
-            await res.json(responseJson);
-
-            console.log('Transaction complete.');
-        } catch (error) {
-            console.log(`Error processing transaction. ${error}`);
-            console.log(error.stack);
-            res.send(error);
-        } finally {
-            // Disconnect from the gateway
-            console.log('Disconnect from Fabric gateway.')
-            gateway.disconnect();
-        }
-    }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+function proofitJoin(req, res, next) {
+   var tt = require('/home/nawhes/proofit/appcli/issue');
 }
 
-function accountQuery(req, res, next) {
+function proofitQuery(req, res, next) {
     if ( !req.body.pin || !req.body.channel ){
         res.send("something wrong");
-	return;
     }
+	console.log(wallet);
     let email;
     let pin = req.body.pin;
     let channel = req.body.channel;
@@ -114,14 +65,13 @@ function accountQuery(req, res, next) {
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
         });
 
     async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+            let connectionProfile = yaml.safeLoad(fs.readFileSync('../gateway/networkConnection.yaml', 'utf8'));
             let connectionOptions = {
                 identity: userName,
                 wallet: wallet,
@@ -169,7 +119,6 @@ function accountQuery(req, res, next) {
 function proofitAppend(req, res, next) {
     if ( !req.body.pin || !req.body.channel ){
         res.send("something wrong");
-	return;
     }
     let email;
     let pin = req.body.pin;
@@ -180,14 +129,13 @@ function proofitAppend(req, res, next) {
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
         });
 
     async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+            let connectionProfile = yaml.safeLoad(fs.readFileSync('../../gateway/networkConnection.yaml', 'utf8'));
             let connectionOptions = {
                 identity: userName,
                 wallet: wallet,
@@ -240,14 +188,13 @@ function proofitRead(req, res, next) {
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
         });
 
     async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+            let connectionProfile = yaml.safeLoad(fs.readFileSync('../../gateway/networkConnection.yaml', 'utf8'));
             let connectionOptions = {
                 identity: userName,
                 wallet: wallet,
@@ -295,7 +242,6 @@ function proofitRead(req, res, next) {
 function proofitDelete(req, res, next) {
     if ( !req.body.pin ){
         res.send("something wrong");
-	return;
     }
     let email;
     let pin = req.body.pin;
@@ -305,14 +251,13 @@ function proofitDelete(req, res, next) {
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
         });
 
     async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+            let connectionProfile = yaml.safeLoad(fs.readFileSync('../../gateway/networkConnection.yaml', 'utf8'));
             let connectionOptions = {
                 identity: userName,
                 wallet: wallet,
@@ -358,9 +303,3 @@ function proofitDelete(req, res, next) {
 }
 
 module.exports = router;
-
-// module.exports.accountJoin = accountJoin;
-// module.exports.accountQuery = accountQuery;
-// module.exports.proofitAppend = proofitAppend;
-// module.exports.proofitRead = proofitRead;
-// module.exports.proofitDelete = proofitDelete;
