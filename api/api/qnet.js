@@ -15,6 +15,20 @@ const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletlicense');
 const userName = 'qnet.license.com';
 const channelName = 'qnet';
 
+let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+let connectionOptions = {
+    identity: userName,
+    wallet: wallet,
+    clientTlsIdentity: userName,
+    discovery: {
+            enabled: true,
+            asLocalhost: true
+    },
+    eventHandlerOptions: {
+            commitTimeout: 100
+    }
+};
+
 router.post('/input', input);
 
 router.post('/query', query);
@@ -34,19 +48,7 @@ function input(req, res, next) {
         const gatewayAccount = new Gateway();
 
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
+
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
             await gatewayAccount.connect(connectionProfile, connectionOptions);
@@ -100,19 +102,6 @@ function query(req, res, next) {
     async function main() {
         const gateway = new Gateway();
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 
@@ -161,19 +150,6 @@ function del(req, res, next) {
     async function main() {
         const gateway = new Gateway();
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 

@@ -15,6 +15,20 @@ const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletuniv');
 const userName = 'smu.univ.com';
 const channelName = 'univ';
 
+let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+let connectionOptions = {
+    identity: userName,
+    wallet: wallet,
+    clientTlsIdentity: userName,
+    discovery: {
+            enabled: true,
+            asLocalhost: true
+    },
+    eventHandlerOptions: {
+            commitTimeout: 100
+    }
+};
+
 router.post('/input', input);
 
 router.post('/query', query);
@@ -23,7 +37,7 @@ router.post('/delete', del);
 
 function input(req, res, next) {
     if ( !req.body.email || !req.body.pin || !req.body.record ){
-        res.send(500, "something wrong");
+        res.json(500, "something wrong");
         return;
     }
     let email = req.body.email;
@@ -34,19 +48,6 @@ function input(req, res, next) {
         const gatewayAccount = new Gateway();
 
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
             await gatewayAccount.connect(connectionProfile, connectionOptions);
@@ -68,13 +69,14 @@ function input(req, res, next) {
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
+
             await res.json(responseJson);
 
             console.log('Transaction complete.');
         } catch (error) {
             console.log(`Error processing transaction. ${error}`);
             console.log(error.stack);
-            res.send(error);
+            res.json(error);
         } finally {
             // Disconnect from the gateway
             console.log('Disconnect from Fabric gateway.')
@@ -101,19 +103,7 @@ function query(req, res, next) {
     async function main() {
         const gateway = new Gateway();
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
+
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 
@@ -128,8 +118,8 @@ function query(req, res, next) {
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
-            await res.json(responseJson);
 
+            await res.json(responseJson);
             console.log('Transaction complete.');
         } catch (error) {
             console.log(`Error processing transaction. ${error}`);
@@ -162,19 +152,6 @@ function del(req, res, next) {
     async function main() {
         const gateway = new Gateway();
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 
@@ -189,6 +166,7 @@ function del(req, res, next) {
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
+
             await res.json(responseJson);
 
             console.log('Transaction complete.');

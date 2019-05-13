@@ -15,6 +15,20 @@ const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletrecruit');
 const userName = 'sk.recruit.com';
 const channelName = 'proofit';
 
+let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+let connectionOptions = {
+    identity: userName,
+    wallet: wallet,
+    clientTlsIdentity: userName,
+    discovery: {
+            enabled: true,
+            asLocalhost: true
+    },
+    eventHandlerOptions: {
+            commitTimeout: 100
+    }
+};
+
 router.post('/read', read);
 
 function read(req, res, next) {
@@ -26,19 +40,7 @@ function read(req, res, next) {
     async function main() {
         const gateway = new Gateway();
         try {
-            let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
-            let connectionOptions = {
-                identity: userName,
-                wallet: wallet,
-                clientTlsIdentity: userName,
-                discovery: {
-                        enabled: true,
-                        asLocalhost: true
-                },
-                eventHandlerOptions: {
-                        commitTimeout: 100
-                }
-            };
+
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 
