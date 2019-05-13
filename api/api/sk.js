@@ -10,16 +10,16 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
+const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletrecruit');
 
 const userName = 'sk.recruit.com';
 const channelName = 'proofit';
 
-router.post('/read', input);
+router.post('/read', read);
 
 function read(req, res, next) {
     if ( !req.body.email ){
-        res.send("something wrong");
+        res.send(500, "something wrong");
         return;
     }
     let email = req.body.email;

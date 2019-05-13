@@ -7,9 +7,9 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(function (req, res, next) { //access control
-  res.header('Access-Control-Allow-Origin', '*');
+//  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'content-type');
+//  res.header('Access-Control-Allow-Headers', 'content-type');
   next();
 });
 

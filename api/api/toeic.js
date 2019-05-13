@@ -10,7 +10,7 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
+const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletlanguage');
 
 const userName = 'toeic.language.com';
 const channelName = 'language';
@@ -23,7 +23,7 @@ router.post('/delete', del);
 
 function input(req, res, next) {
     if ( !req.body.email || !req.body.pin || !req.body.record ){
-        res.send("something wrong");
+        res.send(500, "something wrong");
         return;
     }
     let email = req.body.email;
@@ -92,7 +92,7 @@ function input(req, res, next) {
 
 function query(req, res, next) {
     if ( !req.body.email || !req.body.pin ){
-        res.send("something wrong");
+        res.send(500, "something wrong");
         return;
     }
     let email = req.body.email;
@@ -153,7 +153,7 @@ function query(req, res, next) {
 
 function del(req, res, next) {
     if ( !req.body.email || !req.body.pin ){
-        res.send("something wrong");
+        res.send(500, "something wrong");
         return;
     }
     let email = req.body.email;

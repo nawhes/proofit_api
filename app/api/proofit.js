@@ -10,7 +10,8 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
+const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletapp');
+const bcrypt = require('bcrypt');
 
 //firebase
 const admin = require('firebase-admin');
@@ -32,21 +33,21 @@ router.post('/read', proofitRead);
 router.post('/delete', proofitDelete);
 
 function accountJoin(req, res, next) {
-    if ( !req.body.pin ){
-        res.send("something wrong");
-	return;
+    if (!req.body.pin) {
+        res.send(500, "something wrong");
+        return;
     }
-    let email;
+    var email;
     let pin = req.body.pin;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
+        email = userRecord.email;
+    })
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
+            return;
         });
-    async function main() {
+    setTimeout(async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
@@ -54,14 +55,14 @@ function accountJoin(req, res, next) {
             let connectionOptions = {
                 identity: userName,
                 wallet: wallet,
-		clientTlsIdentity: userName,
+                clientTlsIdentity: userName,
                 discovery: {
-			enabled: true, 
-			asLocalhost: true
-		},
-		eventHandlerOptions: { 
-			commitTimeout: 100
-		}
+                    enabled: true,
+                    asLocalhost: true
+                },
+                eventHandlerOptions: {
+                    commitTimeout: 100
+                }
             };
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
@@ -72,8 +73,9 @@ function accountJoin(req, res, next) {
             console.log('getContract.');
             const contract = await network.getContract('account');
 
+	    let digest = bcrypt.hashSync(pin, 4);
             console.log('Submit transaction.');
-            const response = await contract.submitTransaction('create', email, pin);
+            const response = await contract.submitTransaction('create', email, digest);
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
@@ -90,34 +92,26 @@ function accountJoin(req, res, next) {
             gateway.disconnect();
         }
     }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+        , 3000);
 }
 
 function accountQuery(req, res, next) {
-    if ( !req.body.pin || !req.body.channel ){
-        res.send("something wrong");
-	return;
+    if (!req.body.pin || !req.body.channel) {
+        res.send(500, "something wrong");
+        return;
     }
     let email;
     let pin = req.body.pin;
     let channel = req.body.channel;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
+        email = userRecord.email;
+    })
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
+            return;
         });
-
-    async function main() {
+    setTimeout(async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
@@ -144,7 +138,7 @@ function accountQuery(req, res, next) {
             console.log('Transaction response.');
             let responseJson = JSON.parse(response.toString());
 
-	    await res.json(responseJson);
+            await res.json(responseJson);
             console.log('Transaction complete.');
         } catch (error) {
             console.log(`Error processing transaction. ${error}`);
@@ -156,34 +150,38 @@ function accountQuery(req, res, next) {
             gateway.disconnect();
         }
     }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+        , 3000);
 }
 
 function proofitAppend(req, res, next) {
-    if ( !req.body.pin || !req.body.channel ){
-        res.send("something wrong");
-	return;
+    if (!req.body.pin || !req.body.channel) {
+        res.send(500, "something wrong");
+        return;
     }
     let email;
     let pin = req.body.pin;
     let channel = req.body.channel;
+    let channelName
+    if (channel == "univ") {
+        channelName = "proofitUniv";
+    } else if (channel == "license") {
+        channelName = "proofitLicense";
+    } else if (channel == "language") {
+        channelName = "proofitLanguage";
+    } else {
+        res.send(500, "something wrong");
+        return;
+    }
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
+        email = userRecord.email;
+    })
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
+            return;
         });
 
-    async function main() {
+    setTimeout(async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
@@ -199,10 +197,10 @@ function proofitAppend(req, res, next) {
             await gateway.connect(connectionProfile, connectionOptions);
 
             console.log('getNetwork');
-            const network = await gateway.getNetwork('proofit');
+            const network = await gateway.getNetwork(channelName);
 
             console.log('getContract.');
-            const contract = await network.getContract('proofit');
+            const contract = await network.getContract(channelName);
 
             console.log('Submit transaction.');
             const response = await contract.submitTransaction('append', email, pin, channel);
@@ -222,28 +220,21 @@ function proofitAppend(req, res, next) {
             gateway.disconnect();
         }
     }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+        , 3000);
 }
 
 function proofitRead(req, res, next) {
     let email;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
+        email = userRecord.email;
+    })
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
+            return;
         });
+    setTimeout(async function main() {
 
-    async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
@@ -255,6 +246,7 @@ function proofitRead(req, res, next) {
                 discovery: { enabled: true, asLocalhost: true },
                 eventHandlerOptions: { commitTimeout: 100 }
             };
+            let proofit = {};
             console.log('Connect to Fabric gateway.');
             await gateway.connect(connectionProfile, connectionOptions);
 
@@ -262,15 +254,39 @@ function proofitRead(req, res, next) {
             const network = await gateway.getNetwork('proofit');
 
             console.log('getContract.');
-            const contract = await network.getContract('proofit');
+            let contract = await network.getContract('proofitUniv');
 
             console.log('Evaluate transaction.');
-            const response = await contract.evaluateTransaction('read', email);
+            let response = await contract.evaluateTransaction('read', email);
 
-            console.log('Transaction response.');
             let responseJson = JSON.parse(response.toString());
+            if (responseJson.status == 200 || responseJson.status == 201) {
+                Object.assign(proofit, responseJson.payload);
+            }
 
-            await res.json(responseJson);
+            console.log('getContract.');
+            contract = await network.getContract('proofitLicense');
+
+            console.log('Evaluate transaction.');
+            response = await contract.evaluateTransaction('read', email);
+
+            let responseJson = JSON.parse(response.toString());
+            if (responseJson.status == 200 || responseJson.status == 201) {
+                Object.assign(proofit, responseJson.payload);
+            }
+
+            console.log('getContract.');
+            contract = await network.getContract('proofitLanguage');
+
+            console.log('Evaluate transaction.');
+            response = await contract.evaluateTransaction('read', email);
+
+            let responseJson = JSON.parse(response.toString());
+            if (responseJson.status == 200 || responseJson.status == 201) {
+                Object.assign(proofit, responseJson.payload);
+            }
+
+            await res.json(proofit);
             console.log('Transaction complete.');
         } catch (error) {
             console.log(`Error processing transaction. ${error}`);
@@ -281,34 +297,25 @@ function proofitRead(req, res, next) {
             console.log('Disconnect from Fabric gateway.')
             gateway.disconnect();
         }
-    }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+    }, 3000);
 }
 
 function proofitDelete(req, res, next) {
-    if ( !req.body.pin ){
-        res.send("something wrong");
-	return;
+    if (!req.body.pin) {
+        res.send(500, "something wrong");
+        return;
     }
     let email;
     let pin = req.body.pin;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
-            email = userRecord.email;
-        })
+        email = userRecord.email;
+    })
         .catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
-	    return;
+            return;
         });
-
-    async function main() {
+    setTimeout(async function main() {
         const gateway = new Gateway();
         try {
             const userName = 'app.app.com';
@@ -347,14 +354,7 @@ function proofitDelete(req, res, next) {
             gateway.disconnect();
         }
     }
-    main().then(() => {
-        console.log('Issue program complete.');
-    }).catch((e) => {
-        console.log('Issue program exception.');
-        console.log(e);
-        console.log(e.stack);
-        // process.exit(-1);
-    });
+        , 3000);
 }
 
 module.exports = router;
