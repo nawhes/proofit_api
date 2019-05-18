@@ -66,10 +66,8 @@ function input(req, res, next) {
             const response = await contract.submitTransaction('input', email, pin, userName, record);
             const responseAccount = await contractAccount.submitTransaction('update', email, pin, channelName, userName);
 
-
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
-
             await res.json(responseJson);
 
             console.log('Transaction complete.');

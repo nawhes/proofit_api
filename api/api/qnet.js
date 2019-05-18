@@ -13,7 +13,7 @@ const { FileSystemWallet, Gateway } = require('fabric-network');
 const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletlicense');
 
 const userName = 'qnet.license.com';
-const channelName = 'qnet';
+const channelName = 'license';
 
 let connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
 let connectionOptions = {
