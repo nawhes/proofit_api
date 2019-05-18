@@ -1,0 +1,34 @@
+name: "Network"
+version: "1.0"
+
+organizations:
+    app:
+        mspid: app
+        peers:
+          - app.app.com
+        certificateAuthorities:
+          - server.ca.com
+        adminPrivateKey: 
+            path: /home/nawhes/proofit_api/gateway/crypto-config/app/key
+        signedCert:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/app/cert.pem
+
+orderers:
+    orderer.ca.com:
+        url: grpcs://localhost:7050
+        grpcOptions:
+            ssl-target-name-override: orderer.ca.com
+            grpc-max-send-message-length: -1
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem
+
+peers:
+    app.app.com:
+        url: grpcs://localhost:7051
+        eventUrl: grpcs://localhost:7053
+        grpcOptions:
+            ssl-target-name-override: app.app.com
+            grpc.keepalive_time_ms: 600000
+            request-timeout: 120001
+        tlsCACerts:
+            path: /home/nawhes/proofit_api/gateway/crypto-config/tlscacerts/ca-cert.pem

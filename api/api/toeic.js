@@ -10,7 +10,7 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 // A wallet stores a collection of identities for use
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletlanguage');
+const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
 
 const userName = 'toeic.language.com';
 const channelName = 'language';

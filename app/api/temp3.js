@@ -5,14 +5,12 @@ const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 
-
-
 async function main() {
     const gateway = new Gateway();
     try {
         const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
         const userName = 'app.app.com';
-        const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
+        const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/app.yaml', 'utf8'));
         const connectionOptions = {
             identity: userName,
             wallet: wallet,
@@ -31,13 +29,11 @@ async function main() {
         const contract = await network.getContract('proofit');
 
         console.log('Submit transaction.');
-        const response = await contract.submitTransaction('create', 'nawhes330@gmail.com', '4', '1');
+        const response = await contract.submitTransaction('read', 'nawhes330@gmail.com', '3', '1', 'license', 'qnet.license.com');
 
         console.log('transaction response.');
         let responseJson = JSON.parse(response.toString());
-
-        console.log(responseJson);
-       
+        console.log(responseJson)
         console.log('Transaction complete.');
     } catch (error) {
         console.log(`Error processing transaction. ${error}`);
