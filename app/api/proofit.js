@@ -35,8 +35,7 @@ function create(req, res, next) {
     let pwd = req.body.pwd;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
         email = userRecord.email;
-    })
-        .catch(function (error) {
+    }).catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
         });
@@ -83,13 +82,13 @@ function append(req, res, next) {
     }
     let email;
     let id = req.body.id;
+    let pwd = req.body.pwd;
     let pin = req.body.pin;
     let channel = req.body.channel;
     let issuer = req.body.issuer;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
         email = userRecord.email;
-    })
-        .catch(function (error) {
+    }).catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
         });
@@ -108,7 +107,7 @@ function append(req, res, next) {
                 const contract = await network.getContract('proofit');
 
                 console.log('Submit transaction.');
-                const response = await contract.submitTransaction('append', email, id, pin, channel, issuer);
+                const response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer);
 
                 console.log('transaction response.');
                 let responseJson = JSON.parse(response.toString());
@@ -133,10 +132,10 @@ function appendEmail(req, res, next) {
     }
     let email;
     let id = req.body.id;
+    let pwd = req.body.pwd;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
         email = userRecord.email;
-    })
-        .catch(function (error) {
+    }).catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
         });
@@ -155,7 +154,7 @@ function appendEmail(req, res, next) {
                 const contract = await network.getContract('proofit');
 
                 console.log('Submit transaction.');
-                const response = await contract.submitTransaction('appendEmail', email, id);
+                const response = await contract.submitTransaction('appendEmail', email, id, pwd);
 
                 console.log('transaction response.');
                 let responseJson = JSON.parse(response.toString());
@@ -182,8 +181,7 @@ function read(req, res, next) {
     let id = req.body.id;
     admin.auth().getUser(req.body.uid).then(function (userRecord) {
         email = userRecord.email;
-    })
-        .catch(function (error) {
+    }).catch(function (error) {
             console.log("Error fetching user data:", error);
             res.send(error);
         });

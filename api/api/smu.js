@@ -112,7 +112,7 @@ function query(req, res, next) {
             const contract = await network.getContract(channelName);
             
             console.log('Submit transaction.');
-            const response = await contract.evaluateTransaction('input', email, pin, userName);
+            const response = await contract.evaluateTransaction('query', email, pin, userName);
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());

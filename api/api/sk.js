@@ -37,6 +37,7 @@ function read(req, res, next) {
         return;
     }
     let email = req.body.email;
+    let id = req.body.id;
     async function main() {
         const gateway = new Gateway();
         try {
@@ -51,7 +52,7 @@ function read(req, res, next) {
             const contract = await network.getContract(channelName);
 
             console.log('Submit transaction.');
-            const response = await contract.submitTransaction('read', email);
+            const response = await contract.submitTransaction('read', email, id);
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
