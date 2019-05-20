@@ -29,6 +29,7 @@ let connectionOptions = {
     }
 };
 
+//parameters - email, documentid
 router.post('/read', read);
 
 function read(req, res, next) {

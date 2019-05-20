@@ -3,6 +3,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
+const bcrypt = require('bcrypt');
 
 
 
@@ -25,13 +26,16 @@ async function main() {
         await gateway.connect(connectionProfile, connectionOptions);
 
         console.log('getNetwork');
-        const network = await gateway.getNetwork('proofit');
+        const network = await gateway.getNetwork('account');
 
         console.log('getContract.');
-        const contract = await network.getContract('proofit');
+        const contract = await network.getContract('account');
 
+        let pwd = '1';
+        let digest = bcrypt.hashSync(pwd, 4);
         console.log('Submit transaction.');
-        const response = await contract.submitTransaction('create', 'nawhes330@gmail.com', '4', '1');
+        response = await contract.evaluateTransaction('query', 'nawhes330@gmail.com', '1', 'univ', 'smu.univ.com');
+        // const response = await contract.submitTransaction('create', 'nawhes330@gmail.com', '2', digest);
 
         console.log('transaction response.');
         let responseJson = JSON.parse(response.toString());

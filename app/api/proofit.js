@@ -1,10 +1,11 @@
+const admin = require('firebase-admin');
+
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
-
-const wallet = new FileSystemWallet('/home/nawhes/proofit_api/walletapp');
+const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
 const bcrypt = require('bcrypt');
 const userName = 'app.app.com';
 const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
@@ -16,14 +17,6 @@ const connectionOptions = {
     eventHandlerOptions: { commitTimeout: 100 }
 };
 
-//firebase
-const admin = require('firebase-admin');
-const serviceAccount = require('../proofit-firebase-adminsdk-3nhjp-71e627d9d8.json');
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://proofit-api.firebaseio.com'
-});
 
 
 function create(req, res, next) {

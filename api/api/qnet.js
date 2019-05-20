@@ -29,10 +29,13 @@ let connectionOptions = {
     }
 };
 
+//parameters - email, pin, record
 router.post('/input', input);
 
+//parameters - email, pin
 router.post('/query', query);
 
+//parameters - email, pin
 router.post('/delete', del);
 
 function input(req, res, next) {
@@ -64,11 +67,13 @@ function input(req, res, next) {
 
 
             console.log('Submit transaction.');
-            const response = await contract.submitTransaction('input', email, pin, userName, record);
-            const responseAccount = await contractAccount.submitTransaction('update', email, pin, channelName, userName);
+            const response = await contract.submitTransaction('input', email, pin, gateway.getCurrentIdentity().getName(), record);
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
+            if (responseJson.status == 200) {
+                await contractAccount.submitTransaction('update', email, pin, channelName, gateway.getCurrentIdentity().getName());
+            }
             await res.json(responseJson);
 
             console.log('Transaction complete.');
@@ -112,7 +117,7 @@ function query(req, res, next) {
             const contract = await network.getContract(channelName);
             
             console.log('Submit transaction.');
-            const response = await contract.evaluateTransaction('query', email, pin, userName);
+            const response = await contract.evaluateTransaction('query', email, pin, gateway.getCurrentIdentity().getName());
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());
@@ -160,7 +165,7 @@ function del(req, res, next) {
             const contract = await network.getContract(channelName);
 
             console.log('Submit transaction.');
-            const response = await contract.evaluateTransaction('delete', email, pin, userName);
+            const response = await contract.submitTransaction('delete', email, pin, gateway.getCurrentIdentity().getName());
 
             console.log('transaction response.');
             let responseJson = JSON.parse(response.toString());

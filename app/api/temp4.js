@@ -9,8 +9,8 @@ async function main() {
     const gateway = new Gateway();
     try {
         const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
-        const userName = 'app.app.com';
-        const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/app.yaml', 'utf8'));
+        const userName = 'toeic.language.com';
+        const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
         const connectionOptions = {
             identity: userName,
             wallet: wallet,
@@ -23,13 +23,13 @@ async function main() {
         await gateway.connect(connectionProfile, connectionOptions);
 
         console.log('getNetwork');
-        const network = await gateway.getNetwork('proofit');
+        const network = await gateway.getNetwork('language');
 
         console.log('getContract.');
-        const contract = await network.getContract('proofit');
+        const contract = await network.getContract('language');
 
         console.log('Submit transaction.');
-        const response = await contract.submitTransaction('append', 'nawhes330@gmail.com', '2', '1', '1', 'language', 'toeic.language.com');
+        const response = await contract.submitTransaction('input', 'nawhes330@gmail.com', '1', 'toeic.language.com', "{\"toeicscore\":\"820\",\"expiration\":\"20210509\"}");
 
         console.log('transaction response.');
         let responseJson = JSON.parse(response.toString());

@@ -29,7 +29,7 @@ async function main() {
         const contract = await network.getContract('proofit');
 
         console.log('Submit transaction.');
-        const response = await contract.submitTransaction('append', 'nawhes330@gmail.com', '2', '1', '1', 'language', 'toeic.language.com');
+        const response = await contract.submitTransaction('appendEmail', 'nawhes330@gmail.com', '2', '1');
 
         console.log('transaction response.');
         let responseJson = JSON.parse(response.toString());
