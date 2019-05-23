@@ -3,21 +3,21 @@ const admin = require('firebase-admin');
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
 const yaml = require('js-yaml');
+const bcrypt = require('bcrypt');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
-const bcrypt = require('bcrypt');
-const userName = 'app.app.com';
+
+const identity = 'app.app.com';
+
 const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
 const connectionOptions = {
-    identity: userName,
+    identity: identity,
     wallet: wallet,
-    clientTlsIdentity: userName,
+    clientTlsIdentity: identity,
     discovery: { enabled: true, asLocalhost: true },
     eventHandlerOptions: { commitTimeout: 100 }
 };
-
-
 
 function create(req, res, next) {
     if (!req.body.id || !req.body.pwd) {
@@ -28,11 +28,10 @@ function create(req, res, next) {
     let pwd = req.body.pwd;
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
-    // }).catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    // }).catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
-
     setTimeout(
         async function main() {
             const gateway = new Gateway();
@@ -40,25 +39,24 @@ function create(req, res, next) {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('GetNetwork.');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('proofit');
 
-                console.log('GetContract.');
+                console.log('Get contract.');
                 const contract = await network.getContract('proofit');
 
                 let digest = bcrypt.hashSync(pwd, 4);
                 console.log('Submit transaction.');
                 const response = await contract.submitTransaction('create', email, id, digest);
 
-                console.log('transaction response.');
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
@@ -82,11 +80,10 @@ function append(req, res, next) {
     let parameters = req.body.parameters;
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
-    // }).catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    // }).catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
-
     setTimeout(
         async function main() {
             const gateway = new Gateway();
@@ -94,15 +91,13 @@ function append(req, res, next) {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('GetNetwork.');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('proofit');
 
-                console.log('GetContract.');
+                console.log('Get contract.');
                 const contract = await network.getContract('proofit');
 
-                console.log(typeof parameters);
                 let response;
-
                 console.log('Submit transaction.');
                 if (Array.isArray(parameters)){
                     console.log(parameters.length);
@@ -127,12 +122,11 @@ function append(req, res, next) {
                 console.log('transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
@@ -150,11 +144,10 @@ function appendEmail(req, res, next) {
     let pwd = req.body.pwd;
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
-    // }).catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    // }).catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
-
     setTimeout(
         async function main() {
             const gateway = new Gateway();
@@ -162,24 +155,23 @@ function appendEmail(req, res, next) {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('GetNetwork.');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('proofit');
 
-                console.log('GetContract.');
+                console.log('Get contract.');
                 const contract = await network.getContract('proofit');
 
                 console.log('Submit transaction.');
                 const response = await contract.submitTransaction('appendEmail', email, id, pwd);
 
-                console.log('transaction response.');
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
@@ -196,36 +188,34 @@ function read(req, res, next) {
     let id = req.body.id;
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
-    // }).catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    // }).catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
     setTimeout(
         async function main() {
             const gateway = new Gateway();
             try {
-
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('getNetwork');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('proofit');
 
-                console.log('getContract.');
+                console.log('Get contract.');
                 let contract = await network.getContract('proofit');
 
                 console.log('Evaluate transaction.');
                 let response = await contract.evaluateTransaction('read', email, id);
 
-                console.log('transaction response.');
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
@@ -245,37 +235,35 @@ function del(req, res, next) {
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
     // })
-    //     .catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    //     .catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
-
     setTimeout(
         async function main() {
             const gateway = new Gateway();
             try {
-
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('GetNetwork.');
+                console.log('Get network.');
                 let network = await gateway.getNetwork('proofit');
 
-                console.log('getContract.');
+                console.log('Get contract.');
                 let contract = await network.getContract('proofit');
 
                 console.log('Submit transaction.');
                 let response = await contract.submitTransaction('delete', email, id, pwd);
 
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
 
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.send(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.send(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')

@@ -3,16 +3,18 @@ const admin = require('firebase-admin');
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
 const yaml = require('js-yaml');
+const bcrypt = require('bcrypt');
 const { FileSystemWallet, Gateway } = require('fabric-network');
 
 const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
-const bcrypt = require('bcrypt');
-const userName = 'app.app.com';
+
+const identity = 'app.app.com';
+
 const connectionProfile = yaml.safeLoad(fs.readFileSync('/home/nawhes/proofit_api/gateway/networkConnection.yaml', 'utf8'));
 const connectionOptions = {
-    identity: userName,
+    identity: identity,
     wallet: wallet,
-    clientTlsIdentity: userName,
+    clientTlsIdentity: identity,
     discovery: { enabled: true, asLocalhost: true },
     eventHandlerOptions: { commitTimeout: 100 }
 };
@@ -25,12 +27,11 @@ const connectionOptions = {
 //             req.uid = uid;
 //             next();
 //             // ...
-//         }).catch(function (error) {
-//             console.log(error);
-//             // Handle error
+//         }).catch(function (err) {
+//             console.log(err);
+//             // Handle err
 //         });
 // }
-
 
 function join(req, res, next) {
     if (!req.body.pin) {
@@ -41,42 +42,39 @@ function join(req, res, next) {
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
     // })
-    //     .catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    //     .catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
     setTimeout(
         async function main() {
             const gateway = new Gateway();
             try {
-
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('getNetwork');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('account');
 
-                console.log('getContract.');
+                console.log('Get contract.');
                 const contract = await network.getContract('account');
 
                 let digest = bcrypt.hashSync(pin, 4);
                 console.log('Submit transaction.');
                 const response = await contract.submitTransaction('create', email, digest);
 
-                console.log('transaction response.');
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
-
             }
         }, 1000);
 }
@@ -98,48 +96,44 @@ function query(req, res, next) {
     // admin.auth().getUser(req.body.uid).then(function (userRecord) {
     //     email = userRecord.email;
     // })
-    //     .catch(function (error) {
-    //         console.log("Error fetching user data:", error);
-    //         res.send(error);
+    //     .catch(function (err) {
+    //         console.log("Error fetching user data:", err);
+    //         res.send(err);
     //     });
 
     setTimeout(
         async function main() {
             const gateway = new Gateway();
             try {
-
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
-                console.log('GetNetwork.');
+                console.log('Get network.');
                 const network = await gateway.getNetwork('account');
 
-                console.log('GetContract.');
+                console.log('Get contract.');
                 const contract = await network.getContract('account');
 
                 let response;
+                console.log('evaluate transaction.');
                 if (channel == null) {
-                    console.log('Submit transaction.');
                     response = await contract.evaluateTransaction('query', email, pin);
                 } else {
-                    console.log('Submit transaction.');
                     response = await contract.evaluateTransaction('query', email, pin, channel, issuer);
                 }
 
-                console.log('transaction response.');
+                console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
-
                 console.log('Transaction complete.');
-            } catch (error) {
-                console.log(`Error processing transaction. ${error}`);
-                console.log(error.stack);
-                res.json(error);
+            } catch (err) {
+                console.log(`Error processing transaction. ${err}`);
+                console.log(err.stack);
+                res.json(err);
             } finally {
                 // Disconnect from the gateway
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
-
             }
         }, 1000);
 }

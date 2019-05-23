@@ -2,9 +2,6 @@
 const express = require('express');
 const router = express.Router();
 
-
-
-
 //firebase
 const admin = require('firebase-admin');
 const serviceAccount = require('../proofit-firebase-adminsdk-3nhjp-71e627d9d8.json');

@@ -4,7 +4,7 @@
 const express = require('express');
 const router = express.Router();
 
-const code = require('./qnetcode');
+const code = require('./smucode');
 
 //parameters - email, pin, record
 router.post('/input', code.input);
