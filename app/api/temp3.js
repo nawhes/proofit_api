@@ -28,8 +28,12 @@ async function main() {
         console.log('getContract.');
         const contract = await network.getContract('proofit');
 
+        var a = ['GPA','issueby'];
+
+        
+
         console.log('Submit transaction.');
-        const response = await contract.submitTransaction('append', 'nawhes330@gmail.com', '2', '1', '1', 'language', 'toeic.language.com');
+        const response = await contract.submitTransaction('append', 'nawhes330@gmail.com', 'qwe', '123', '123', 'univ', 'smu.univ.com', a[0], a[1]);
 
         console.log('transaction response.');
         let responseJson = JSON.parse(response.toString());

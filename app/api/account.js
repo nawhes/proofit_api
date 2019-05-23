@@ -36,15 +36,15 @@ function join(req, res, next) {
     if (!req.body.pin) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let pin = req.body.pin;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    })
-        .catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // })
+    //     .catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
     setTimeout(
         async function main() {
             const gateway = new Gateway();
@@ -78,14 +78,14 @@ function join(req, res, next) {
                 gateway.disconnect();
 
             }
-        }, 3500);
+        }, 1000);
 }
 
 function query(req, res, next) {
     if (!req.body.pin) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let pin = req.body.pin;
     let channel = null;
     let issuer = null;
@@ -95,13 +95,13 @@ function query(req, res, next) {
     if (req.body.issuer){
         issuer = req.body.issuer;
     }
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    })
-        .catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // })
+    //     .catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
 
     setTimeout(
         async function main() {
@@ -141,8 +141,8 @@ function query(req, res, next) {
                 gateway.disconnect();
 
             }
-        }, 3500);
+        }, 1000);
 }
 
-exports.join = join
-exports.query = query
+exports.join = join;
+exports.query = query;

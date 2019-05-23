@@ -23,15 +23,15 @@ function create(req, res, next) {
     if (!req.body.id || !req.body.pwd) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let id = req.body.id;
     let pwd = req.body.pwd;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    }).catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // }).catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
 
     setTimeout(
         async function main() {
@@ -64,7 +64,7 @@ function create(req, res, next) {
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
             }
-        }, 3500);
+        }, 1000);
 }
 
 function append(req, res, next) {
@@ -73,18 +73,19 @@ function append(req, res, next) {
             res.send("something wrong");
         }
     }
-    let email;
+    let email = req.body.email;
     let id = req.body.id;
     let pwd = req.body.pwd;
     let pin = req.body.pin;
     let channel = req.body.channel;
     let issuer = req.body.issuer;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    }).catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    let parameters = req.body.parameters;
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // }).catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
 
     setTimeout(
         async function main() {
@@ -99,9 +100,30 @@ function append(req, res, next) {
                 console.log('GetContract.');
                 const contract = await network.getContract('proofit');
 
-                console.log('Submit transaction.');
-                const response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer);
+                console.log(typeof parameters);
+                let response;
 
+                console.log('Submit transaction.');
+                if (Array.isArray(parameters)){
+                    console.log(parameters.length);
+                    if (parameters.length == 1){
+                        response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0]);
+                    }
+                    if (parameters.length == 2){
+                        response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0], parameters[1]);
+                    }
+                    if (parameters.length == 3){
+                        response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0], parameters[1], parameters[2]);
+                    }
+                    if (parameters.length == 4){
+                        response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0], parameters[1], parameters[2], parameters[3]);
+                    }
+                    if (parameters.length == 5){
+                        response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]);
+                    }
+                } else {
+                    response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer);
+                }
                 console.log('transaction response.');
                 let responseJson = JSON.parse(response.toString());
                 await res.json(responseJson);
@@ -116,22 +138,22 @@ function append(req, res, next) {
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
             }
-        }, 3500);
+        }, 1000);
 }
 
 function appendEmail(req, res, next) {
     if (!req.body.id) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let id = req.body.id;
     let pwd = req.body.pwd;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    }).catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // }).catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
 
     setTimeout(
         async function main() {
@@ -163,21 +185,21 @@ function appendEmail(req, res, next) {
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
             }
-        }, 3500);
+        }, 1000);
 }
 
 function read(req, res, next) {
     if (!req.body.id) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let id = req.body.id;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    }).catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // }).catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
     setTimeout(
         async function main() {
             const gateway = new Gateway();
@@ -210,23 +232,23 @@ function read(req, res, next) {
                 gateway.disconnect();
             }
 
-        }, 3500);
+        }, 1000);
 }
 
 function del(req, res, next) {
     if (!req.body.id) {
         res.send("something wrong");
     }
-    let email;
+    let email = req.body.email;
     let id = req.body.id;
     let pwd = req.body.pwd;
-    admin.auth().getUser(req.body.uid).then(function (userRecord) {
-        email = userRecord.email;
-    })
-        .catch(function (error) {
-            console.log("Error fetching user data:", error);
-            res.send(error);
-        });
+    // admin.auth().getUser(req.body.uid).then(function (userRecord) {
+    //     email = userRecord.email;
+    // })
+    //     .catch(function (error) {
+    //         console.log("Error fetching user data:", error);
+    //         res.send(error);
+    //     });
 
     setTimeout(
         async function main() {
@@ -259,7 +281,7 @@ function del(req, res, next) {
                 console.log('Disconnect from Fabric gateway.')
                 gateway.disconnect();
             }
-        }, 3500);
+        }, 1000);
 }
 
 exports.create = create;

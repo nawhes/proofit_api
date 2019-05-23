@@ -15,8 +15,8 @@ admin.initializeApp({
 });
 
 
-const account = require('./account')
-const proofit = require('./proofit')
+const account = require('./account');
+const proofit = require('./proofit');
 
 
 //parameters - email, pin
