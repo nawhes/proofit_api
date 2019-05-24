@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const fs = require('fs');
 const yaml = require('js-yaml');
 const bcrypt = require('bcrypt');
-const { FileSystemWallet, Gateway } = require('fabric-network');
+const { FileSystemWallet, Gateway, DefaultEventHandlerStrategies } = require('fabric-network');
 
 const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
 
@@ -16,7 +16,7 @@ const connectionOptions = {
     wallet: wallet,
     clientTlsIdentity: identity,
     discovery: { enabled: true, asLocalhost: true },
-    eventHandlerOptions: { commitTimeout: 100 }
+    eventHandlerOptions: { commitTimeout: 0,strategy: DefaultEventHandlerStrategies.NETWORK_SCOPE_ALLFORTX }
 };
 
 function create(req, res, next) {
@@ -34,20 +34,20 @@ function create(req, res, next) {
     //     });
     setTimeout(
         async function main() {
-            const gateway = new Gateway();
+            let gateway = new Gateway();
             try {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
                 console.log('Get network.');
-                const network = await gateway.getNetwork('proofit');
+                let network = await gateway.getNetwork('proofit');
 
                 console.log('Get contract.');
-                const contract = await network.getContract('proofit');
+                let contract = await network.getContract('proofit');
 
                 let digest = bcrypt.hashSync(pwd, 4);
                 console.log('Submit transaction.');
-                const response = await contract.submitTransaction('create', email, id, digest);
+                let response = await contract.submitTransaction('create', email, id, digest);
 
                 console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
@@ -86,21 +86,22 @@ function append(req, res, next) {
     //     });
     setTimeout(
         async function main() {
-            const gateway = new Gateway();
+            let gateway = new Gateway();
             try {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
+                console.log(gateway.getOptions());
 
                 console.log('Get network.');
-                const network = await gateway.getNetwork('proofit');
+                let network = await gateway.getNetwork('proofit');
 
                 console.log('Get contract.');
-                const contract = await network.getContract('proofit');
+                let contract = await network.getContract('proofit');
 
                 let response;
                 console.log('Submit transaction.');
                 if (Array.isArray(parameters)){
-                    console.log(parameters.length);
+                    console.log("parameters count : ", parameters.length);
                     if (parameters.length == 1){
                         response = await contract.submitTransaction('append', email, id, pwd, pin, channel, issuer, parameters[0]);
                     }
@@ -150,19 +151,19 @@ function appendEmail(req, res, next) {
     //     });
     setTimeout(
         async function main() {
-            const gateway = new Gateway();
+            let gateway = new Gateway();
             try {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
                 console.log('Get network.');
-                const network = await gateway.getNetwork('proofit');
+                let network = await gateway.getNetwork('proofit');
 
                 console.log('Get contract.');
-                const contract = await network.getContract('proofit');
+                let contract = await network.getContract('proofit');
 
                 console.log('Submit transaction.');
-                const response = await contract.submitTransaction('appendEmail', email, id, pwd);
+                let response = await contract.submitTransaction('appendEmail', email, id, pwd);
 
                 console.log('Transaction response.');
                 let responseJson = JSON.parse(response.toString());
@@ -194,13 +195,13 @@ function read(req, res, next) {
     //     });
     setTimeout(
         async function main() {
-            const gateway = new Gateway();
+            let gateway = new Gateway();
             try {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);
 
                 console.log('Get network.');
-                const network = await gateway.getNetwork('proofit');
+                let network = await gateway.getNetwork('proofit');
 
                 console.log('Get contract.');
                 let contract = await network.getContract('proofit');
@@ -241,7 +242,7 @@ function del(req, res, next) {
     //     });
     setTimeout(
         async function main() {
-            const gateway = new Gateway();
+            let gateway = new Gateway();
             try {
                 console.log('Connect to Fabric gateway.');
                 await gateway.connect(connectionProfile, connectionOptions);

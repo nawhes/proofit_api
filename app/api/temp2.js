@@ -2,7 +2,7 @@
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
 const yaml = require('js-yaml');
-const { FileSystemWallet, Gateway } = require('fabric-network');
+const { FileSystemWallet, Gateway, DefaultEventHandlerStrategies } = require('fabric-network');
 const bcrypt = require('bcrypt');
 
 
@@ -19,28 +19,32 @@ async function main() {
             wallet: wallet,
             clientTlsIdentity: userName,
             discovery: { enabled: true, asLocalhost: true },
-            eventHandlerOptions: { commitTimeout: 100 }
+            eventHandlerOptions: { commitTimeout: 0,strategy: DefaultEventHandlerStrategies.NETWORK_SCOPE_ALLFORTX }
+  
         };
 
         console.log('Connect to Fabric gateway.');
         await gateway.connect(connectionProfile, connectionOptions);
-
+        console.log(gateway.getOptions());
+        
         console.log('getNetwork');
         const network = await gateway.getNetwork('account');
+        
 
         console.log('getContract.');
         const contract = await network.getContract('account');
+        
 
         let pwd = '1';
         let digest = bcrypt.hashSync(pwd, 4);
         console.log('Submit transaction.');
         response = await contract.evaluateTransaction('query', 'nawhes330@gmail.com', '1', 'univ', 'smu.univ.com');
         // const response = await contract.submitTransaction('create', 'nawhes330@gmail.com', '2', digest);
+        
+        // console.log('transaction response.');
+        // let responseJson = JSON.parse(response.toString());
 
-        console.log('transaction response.');
-        let responseJson = JSON.parse(response.toString());
-
-        console.log(responseJson);
+        // console.log(responseJson);
        
         console.log('Transaction complete.');
     } catch (error) {

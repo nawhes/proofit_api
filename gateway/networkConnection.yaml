@@ -35,26 +35,31 @@ channels:
                 chaincodeQuery: true
                 ledgerQuery: true
                 eventSource: true
+                discover: true
             sk.recruit.com:
                 endorsingPeer: false
                 chaincodeQuery: true
                 ledgerQuery: true
                 eventSource: true
+                discover: true
             smu.univ.com:
                 endorsingPeer: true
                 chaincodeQuery: true
                 ledgerQuery: true
                 eventSource: true
+                discover: true
             qnet.license.com:
                 endorsingPeer: true
                 chaincodeQuery: true
                 ledgerQuery: true
                 eventSource: true
+                discover: true
             toeic.language.com:
                 endorsingPeer: true
                 chaincodeQuery: true
                 ledgerQuery: true
                 eventSource: true
+                discover: true
 
     univ:
         orderers:

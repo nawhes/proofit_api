@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const fs = require('fs');
 const yaml = require('js-yaml');
 const bcrypt = require('bcrypt');
-const { FileSystemWallet, Gateway } = require('fabric-network');
+const { FileSystemWallet, Gateway, DefaultEventHandlerStrategies } = require('fabric-network');
 
 const wallet = new FileSystemWallet('/home/nawhes/proofit_api/wallet');
 
@@ -16,7 +16,7 @@ const connectionOptions = {
     wallet: wallet,
     clientTlsIdentity: identity,
     discovery: { enabled: true, asLocalhost: true },
-    eventHandlerOptions: { commitTimeout: 100 }
+    eventHandlerOptions: { commitTimeout: 0,strategy: DefaultEventHandlerStrategies.NETWORK_SCOPE_ALLFORTX }
 };
 
 // function verifyIdToken(req, res, next) {
